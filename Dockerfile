@@ -1,8 +1,7 @@
 FROM node:14
-WORKDIR /app
+WORKDIR /Backend
 COPY package*.json ./
 RUN npm install
-RUN apt-get update && apt-get install -y mysql-client
-EXPOSE 3000
+EXPOSE 3306
 COPY index.js .
 CMD ["npm", "start"]
