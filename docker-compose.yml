@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: hTKjxcKQNK
+      MYSQL_DATABASE: sql9656069
+      MYSQL_USER: sql9656069
+    ports:
+    - "3310:3306"
+
+  nodejs:
+    build:
+      context: .
+    ports:
+      - "3306:3306"
+    depends_on:
+      - mysql
