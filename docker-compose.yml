@@ -1,19 +1,29 @@
-version: '3'
+version: '3.8'
 
 services:
-  mysql:
+  mysqldb:
     image: mysql:5.7
+    restart: unless-stopped
+    env_file: ./.env
     environment:
-      MYSQL_ROOT_PASSWORD: hTKjxcKQNK
-      MYSQL_DATABASE: sql9656069
-      MYSQL_USER: sql9656069
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_NAME=$DB_NAME
     ports:
-    - "3310:3306"
-
-  nodejs:
-    build:
-      context: .
-    ports:
-      - "3306:3306"
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    
+  app:
     depends_on:
-      - mysql
+      - mysqldb
+    build: ./
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      - HOST=mysqldb
+      - USER=$DB_USER
+      - PASSWORD=$DB_PASSWORD
+      - NAME=$DB_NAME
+      - PORT=$MYSQLDB_DOCKER_PORT
+    stdin_open: true
+    tty: true
