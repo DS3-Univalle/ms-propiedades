@@ -1,19 +1,32 @@
 import express from "express"
 import mysql from "mysql"
 import cors from "cors"
+import dotenv from 'dotenv';
 
+dotenv.config(); 
 
 const app = express()
-const db = mysql.createConnection({
-    host:"bzif0dgvzjp0ltbihfzv-mysql.services.clever-cloud.com",
-    user:"uobhlq41ybfzh4h3",
-    password:"8jJ8cC8gVEqtVJs7ntkw",
-    database:"bzif0dgvzjp0ltbihfzv"
-})
 
-app.get("/", (req, res)=>{
-    res.json("hello this is backend")
-})
+const {
+  HOST,
+  USER,
+  PASSWORD,
+  DB
+} = process.env;
+const db = mysql.createConnection({
+  host: HOST,
+  user: USER,
+  password: PASSWORD,
+  database: DB
+});
+
+
+
+
+
+app.get('/', (req, res) => {
+  res.status(200).send('Hola');
+});
 app.use(cors());
 // GET ALL PROPERTIES
 app.get("/cabins", (req, res)=>{
@@ -114,6 +127,17 @@ app.get("/cabin/state/:id", (req, res) =>{
   })
 })
 
-app.listen(3306, ()=>{
+//get cabin state name
+app.get("/cabins/states/:id", (req, res) =>{
+  const propertyID = req.params.id;
+  const q = "SELECT cabins.id_cabin, states.id_state, states.state FROM cabins JOIN states ON cabins.id_state = states.id_state WHERE cabins.id_cabin = ?"
+  db.query(q, [propertyID], (err, data) =>{
+    if(err) return res.json(err)
+    return res.json(data)
+  })
+})
+
+const PORT = process.env.NODE_DOCKER_PORT || 3000
+app.listen(PORT, ()=>{
     console.log("listening");
 })
