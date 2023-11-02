@@ -1,7 +1,8 @@
 FROM node:14
 WORKDIR /Backend
-COPY package*.json ./
+COPY package.json ./
 RUN npm install
-EXPOSE 3000
-COPY index.js .
+COPY . .
+EXPOSE 8080
 CMD ["npm", "start"]
+

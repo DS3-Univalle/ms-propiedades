@@ -8,16 +8,17 @@ dotenv.config();
 const app = express()
 
 const {
-  HOST,
-  USER,
-  PASSWORD,
-  DB
+  DB_HOST,
+  DB_USER,
+  DB_PASSWORD,
+  DB_NAME,
+  DB_PORT,
 } = process.env;
 const db = mysql.createConnection({
-  host: HOST,
-  user: USER,
-  password: PASSWORD,
-  database: DB
+  host: DB_HOST,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME
 });
 
 
