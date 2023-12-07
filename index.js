@@ -138,6 +138,48 @@ app.get("/cabins/states/:id", (req, res) =>{
   })
 })
 
+app.get("/cabins-filtered-by-states", (req, res) => {
+  // Assuming you are sending an array of state IDs in the query parameters like "?id=1&id=2&id=3"
+  const stateIDs = req.query.id;
+
+  // If only one ID is provided, convert it to an array
+  const stateIDsArray = Array.isArray(stateIDs) ? stateIDs : [stateIDs];
+
+  // Use the "IN" clause in SQL to filter by multiple state IDs
+  const q = "SELECT * FROM cabins WHERE id_state IN (?)";
+
+  db.query(q, [stateIDsArray], (err, data) => {
+    if (err) return res.json(err);
+    return res.json(data);
+  });
+});
+
+//añadir fotos a la bd con nombre y url
+app.post("/photos", (req, res) => {
+  const q = "INSERT INTO photos (`url_photo`, `id_cabin`, `id_state`, `name_photo`) VALUES (?)"
+  const values = [
+    req.body.url_photo,
+    req.body.id_cabin,
+    req.body.id_state,
+    req.body.name_photo
+  ]
+
+  db.query(q, [values], (err, data) =>{
+    if(err) return res.json(err)
+    return res.json("photos added to the cabin bd")
+  })
+})
+
+app.get("/all-photos-cabin/:id", (req, res) =>{
+  const propertyID = req.params.id;
+  const q = "SELECT * FROM photos WHERE id_cabin = ?"
+
+  db.query(q, [propertyID], (err, data) =>{
+    if(err) return res.json(err)
+    return res.json(data)
+  })
+})
+
 const PORT = process.env.NODE_DOCKER_PORT || 3000
 app.listen(PORT, ()=>{
     console.log("listening");
